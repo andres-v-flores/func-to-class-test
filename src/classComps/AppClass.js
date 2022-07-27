@@ -122,11 +122,10 @@ class AppClass extends Component {
             this.setState({err: e.message});
         }
     }
-    async saveEditTask() {
-        console.log(this.state.tasked + ' edited task ' + this.state.inputChange);
-        let newTaskObj = {task: this.state.inputChange};
+    async saveEditTask(taskId, obj) {
+        let newTaskObj = obj;
         async function  fetchPut(){
-            const response = await fetch(URL + '/'+ this.state.tasked+'.json', {
+            const response = await fetch(URL + '/'+ taskId+'.json', {
                 method: 'PUT',
                 body: JSON.stringify(newTaskObj),
                 headers: {
@@ -147,9 +146,9 @@ class AppClass extends Component {
             // will just crash
             // other functionalities work just fine
             console.log(data);
-            let arrIndex = this.state.toDo.findIndex(obj => obj.id === this.state.tasked);
+            let arrIndex = this.state.toDo.findIndex(obj => obj.id === taskId);
             this.setState(prev => {
-                prev.toDo[arrIndex] = {...newTaskObj, id: prev.tasked};
+                prev.toDo[arrIndex] = {...newTaskObj, id: taskId};
                 return {
                     toDo: prev.toDo,
                     isEdit: false,
@@ -191,6 +190,7 @@ class AppClass extends Component {
                     setInputChange={this.inputChangeHandler}
                     isEdit={this.state.isEdit}
                     onDoneEdit={this.saveEditTask}
+                    currEditId={this.state.tasked}
                     />
                     <div className="w-50">
                         <Button onClick={this.fetchButtonHandler}>Fetch Task</Button>

@@ -23,7 +23,7 @@ class ToDoFormClass extends Component {
             this.props.setInputChange('');
         } else {
             console.log('finished editing');
-            this.props.onDoneEdit();
+            this.props.onDoneEdit(this.props.currEditId,{task: this.props.inputChange.trim()});
         }
     }
     render(){
