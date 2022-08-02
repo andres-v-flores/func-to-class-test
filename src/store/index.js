@@ -1,5 +1,5 @@
 import { createStore, combineReducers } from "redux";
-import { edditReducer, errorReducer, inputReducer } from "./redux-container";
+import { edditReducer, errorReducer, inputReducer } from "./reducers";
 
 const rootReducer = combineReducers({
     edditState: edditReducer,

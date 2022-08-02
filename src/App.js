@@ -16,30 +16,14 @@ class App extends Component {
             toDo: [], // todo state will remain for now in the appClass section
             err: null,
             isEdit: false,
-            inputChange: "",
             tasked: "",
         };
-        this.inputChangeHandler = this.inputChangeHandler.bind(this);
-        this.fetchEditTask = this.fetchEditTask.bind(this);
         this.fetchButtonHandler = this.fetchButtonHandler.bind(this);
         this.fetchTask = this.fetchTask.bind(this);
         this.submitToDataBase = this.submitToDataBase.bind(this);
         this.deleteTask = this.deleteTask.bind(this);
         this.saveEditTask = this.saveEditTask.bind(this);
     }
-    inputChangeHandler(task) {
-        this.setState({ inputChange: task });
-    }
-    fetchEditTask(taskId, task) {
-        console.log("editing the " + taskId);
-        this.setState({
-            inputChange: task,
-            isEdit: true,
-            tasked: taskId,
-        });
-        this.inputRef.current.focus();
-    }
-
     fetchButtonHandler() {
         this.fetchTask();
     }
@@ -182,7 +166,7 @@ class App extends Component {
                     id={toDoItem.id}
                     toDo={toDoItem.task}
                     onDelete={this.deleteTask}
-                    onEditTask={this.fetchEditTask}
+                    focusRef={this.inputRef}
                 />
             );
         });
@@ -193,8 +177,6 @@ class App extends Component {
                     <ToDoForm
                         focusRef={this.inputRef}
                         onSubmitForm={this.submitToDataBase}
-                        inputChange={this.state.inputChange}
-                        setInputChange={this.inputChangeHandler}
                         isEdit={this.state.isEdit}
                         onDoneEdit={this.saveEditTask}
                         currEditId={this.state.tasked}
