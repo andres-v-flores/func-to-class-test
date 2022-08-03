@@ -10,12 +10,8 @@ class DisplayToDo extends Component {
         this.onEditHandler = this.onEditHandler.bind(this);
     }
     onEditHandler() {
-        console.log("editing");
         this.props.onEditTask(this.props.toDo, this.props.id);
         this.props.focusRef.current.focus();
-        console.log(this.props.inputChange);
-        console.log(this.props.isEdit);
-        console.log(this.props.errorMessage);
     }
     onDeleteHandler() {
         this.props.onDelete(this.props.id);

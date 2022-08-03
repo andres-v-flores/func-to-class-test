@@ -4,7 +4,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import DisplayToDo from "./components/DisplayToDo";
 import ToDoForm from "./components/ToDoForm";
-
+import { connect } from "react-redux";
+import { newError, clearEdit, clearInput } from "./store/actions";
 const URL =
     "https://react-http-398cc-default-rtdb.asia-southeast1.firebasedatabase.app/task";
 
@@ -14,19 +15,16 @@ class App extends Component {
         this.inputRef = createRef();
         this.state = {
             toDo: [], // todo state will remain for now in the appClass section
-            err: null,
-            isEdit: false,
-            tasked: "",
         };
-        this.fetchButtonHandler = this.fetchButtonHandler.bind(this);
+        // this.fetchButtonHandler = this.fetchButtonHandler.bind(this);
         this.fetchTask = this.fetchTask.bind(this);
         this.submitToDataBase = this.submitToDataBase.bind(this);
         this.deleteTask = this.deleteTask.bind(this);
         this.saveEditTask = this.saveEditTask.bind(this);
     }
-    fetchButtonHandler() {
-        this.fetchTask();
-    }
+    // fetchButtonHandler() {
+    //     this.fetchTask();
+    // }
 
     async fetchTask() {
         async function fetchGet() {
@@ -52,8 +50,7 @@ class App extends Component {
             // console.log(data);
             // console.log('fetch success');
         } catch (e) {
-            this.setState({ err: e.message });
-            console.log("something went error");
+            this.props.newError(e.message);
         }
     }
     async submitToDataBase(obj) {
@@ -78,10 +75,10 @@ class App extends Component {
             this.setState((prev) => {
                 return { toDo: [...prev.toDo, { ...obj, id: data.name }] };
             });
+            this.props.clearInput();
             // console.log(data);
         } catch (e) {
-            this.setState({ err: e.message });
-            console.log("something went error");
+            this.props.newError(e.message);
         }
     }
     async deleteTask(taskId) {
@@ -106,7 +103,7 @@ class App extends Component {
                 return { toDo: prev.toDo.filter((obj) => obj.id !== taskId) };
             });
         } catch (e) {
-            this.setState({ err: e.message });
+            this.props.newError(e.message);
         }
     }
     async saveEditTask(taskId, obj) {
@@ -127,7 +124,7 @@ class App extends Component {
         }
 
         try {
-            console.log("trying to do put");
+            // console.log("trying to do put");
             let data = await fetchPut(); // class crashes here IDK why
             // double checked it but no spelling errors
             // will just crash
@@ -140,16 +137,11 @@ class App extends Component {
                 prev.toDo[arrIndex] = { ...newTaskObj, id: taskId };
                 return {
                     toDo: prev.toDo,
-                    isEdit: false,
-                    tasked: "",
-                    inputChange: "",
                 };
             });
+            this.props.clearEdit();
         } catch (e) {
-            console.log("something went wrong");
-            console.log(this.state);
-            console.log(e.message);
-            this.setState({ err: e.message });
+            this.props.newError(e.message);
         }
     }
 
@@ -177,14 +169,12 @@ class App extends Component {
                     <ToDoForm
                         focusRef={this.inputRef}
                         onSubmitForm={this.submitToDataBase}
-                        isEdit={this.state.isEdit}
                         onDoneEdit={this.saveEditTask}
-                        currEditId={this.state.tasked}
                     />
                     <div className="w-50">
-                        <Button onClick={this.fetchButtonHandler}>
+                        {/* {<Button onClick={this.fetchButtonHandler}>
                             Fetch Task
-                        </Button>
+                        </Button>} */}
                         <ul className="list-group red">{toDoArr}</ul>
                     </div>
                 </header>
@@ -193,4 +183,27 @@ class App extends Component {
     }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+    return {
+        inputChange: state.inputState.inputChange,
+        isEdit: state.edditState.isEdit,
+        err: state.errorState.err,
+        tasked: state.edditState.tasked,
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        clearInput: () => {
+            dispatch(clearInput());
+        },
+        newError: (message) => {
+            dispatch(newError(message));
+        },
+        clearEdit: () => {
+            dispatch(clearEdit());
+        },
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
