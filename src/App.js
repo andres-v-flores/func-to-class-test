@@ -1,5 +1,4 @@
 import React, { Component, createRef } from "react";
-import { Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import DisplayToDo from "./components/DisplayToDo";
@@ -25,7 +24,7 @@ class App extends Component {
     // fetchButtonHandler() {
     //     this.fetchTask();
     // }
-
+    // dispatch({type: FETCHING_TASK})
     async fetchTask() {
         async function fetchGet() {
             const response = await fetch(URL + ".json");
@@ -39,6 +38,7 @@ class App extends Component {
         }
         try {
             let data = await fetchGet();
+            // disptach{type: DONE_FETCHING, payload: {...data}}
             let taskArr = [];
             for (const key in data) {
                 taskArr.push({
